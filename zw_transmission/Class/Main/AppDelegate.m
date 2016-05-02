@@ -1,12 +1,13 @@
 //
 //  AppDelegate.m
-//  zw_transmission
+//  transmission
 //
 //  Created by zzwu on 16/5/2.
 //  Copyright © 2016年 zzwu. All rights reserved.
 //
 
 #import "AppDelegate.h"
+#import "ZWHomeViewController.h"
 
 @interface AppDelegate ()
 
@@ -17,6 +18,12 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height)];
+    self.window = window;
+    ZWHomeViewController *homeController = [[ZWHomeViewController alloc] init];
+    UINavigationController *naV = [[UINavigationController alloc] initWithRootViewController:homeController];
+    self.window.rootViewController = naV;
+    [self.window makeKeyAndVisible];
     return YES;
 }
 

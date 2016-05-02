@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="renderer" content="webkit">
+
+<link rel="stylesheet" href="./css/style.css" type="text/css" charset="utf-8">
+<title>文件传输</title>
+</head>
+<body>
+<div class="wrap">
+	<div class="right">
+    	<p class="title">文件管理</p>
+        <dl class="first">
+            <dt>文件名</dt>
+            <dd>大小</dd>
+            <dd class="wf_bgn">操作</dd>
+        </dl>
+        
+        <div class="scroll">
+           <ul class="" id="tableStyle"></ul>
+        </div><!--scroll end-->
+    </div><!--right end-->
+    <div class="left">
+    	<div class="logo"></div>
+        <div id="drag_area" class="wf_box  wf_normal"><h3>拖拽至此上传</h3></div>
+
+        <div class="wf_btn">
+            <a class="file-a" href="#">
+                <input type="file" value="选择文件" class="fileUpload" id="fileToUpload" onchange="fileSelected();" multiple/>
+            </a>
+            <!--a{}-->
+            <!--a:hover{background:green;}-->
+            <!--input{position:absolute; right:0; top:0; font-size:100px; opacity:0; filter:alpha(opacity=0);}-->
+        </div>
+        <!--<div class="wf_btn">-->
+        <!--<object wmode="transparent" id="SWFUpload_0" type="application/x-shockwave-flash" data="./js/swfupload.swf" width="240" height="100" class="swfupload"><param name="wmode" value="transparent"><param name="movie" value="js/swfupload.swf?preventswfcaching=1462004233219"><param name="quality" value="high"><param name="allowScriptAccess" value="always"><param name="flashvars" value="movieName=SWFUpload_0&amp;uploadURL=http%3A%2F%2F192.168.1.117%3A15000%3Faction%3DaddBook&amp;useQueryString=false&amp;requeueOnError=false&amp;httpSuccess=&amp;assumeSuccessTimeout=30&amp;params=&amp;filePostName=Filedata&amp;fileTypes=*.txt%3B*.epub%3B*.ebk2%3B*.ebk3%3B*.pdf%3B*.umd%3B*.doc%3B*.docx%3B*.wps%3B*.xls%3B*.xlsx%3B*.et%3B*.ppt%3B*.pptx%3B*.dps&amp;fileTypesDescription=All%20Files&amp;fileSizeLimit=524288000%20B&amp;fileUploadLimit=1000&amp;fileQueueLimit=0&amp;debugEnabled=0&amp;buttonImageURL=%2Fi%2Fwifi_btn.png&amp;buttonWidth=240&amp;buttonHeight=100&amp;buttonText=%3Cspan%20class%3D%22theFont%22%3E%3C%2Fspan%3E&amp;buttonTextTopPadding=0&amp;buttonTextLeftPadding=0&amp;buttonTextStyle=color%3A%20%23000000%3B%20font-size%3A%2016pt%3B&amp;buttonAction=-110&amp;buttonDisabled=false&amp;buttonCursor=-2"></object>-->
+        <!--</div>-->
+        <p class="wf_gs">支持格式：文档格式和图片格式等非可执行文件</p>
+    </div><!--left end -->
+</div>
+
+<script src="./js/jquery-1.4.2.min.js"></script>
+<script src="./js/common.js"></script>
+<script src="./js/html5_fun.js"></script>
+
+</body>
+</html>
