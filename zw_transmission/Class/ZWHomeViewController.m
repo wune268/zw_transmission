@@ -11,6 +11,7 @@
 #import "ZWSendFileController.h"
 #import "ZWHomeTableViewCell.h"
 #import "ZWFileObject.h"
+#import "MJRefresh.h"
 
 #import <QuickLook/QuickLook.h>
 
@@ -26,19 +27,26 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    [self zw_getFileFromDocuments];
+    
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor whiteColor];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"收文件" style:UIBarButtonItemStyleDone target:self action:@selector(zw_presentReception)];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"发文件" style:UIBarButtonItemStyleDone target:self action:@selector(zw_presentSend)];
     UIView *footView = [[UIView alloc] initWithFrame:CGRectZero];
     self.tableView.tableFooterView = footView;
+    
+    __block typeof(self)myself = self;
+    self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [myself zw_getFileFromDocuments];
+    }];
 }
 
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    NSLog(@"viewWillAppear");
-    [self zw_getFileFromDocuments];
+    [self.tableView.mj_header beginRefreshing];
 }
 
 -(void)zw_openFielWithPath:(NSString *)cachePath fileName:(NSString *)fileName
@@ -67,38 +75,8 @@
 {
     NSString *filePath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
     
-//    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath:filePath];
-    
-    
-//    //第一种方法： NSFileManager实例方法读取数据
-//    filePath = [filePath stringByAppendingPathComponent:@"post.html"];
-//    NSLog(@"桌面目录：%@", filePath);
-//    NSFileManager* fm = [NSFileManager defaultManager];
-//    NSData* data = [[NSData alloc] init];
-//    data = [fm contentsAtPath:filePath];
-//    NSLog(@"%@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-//
-//    
-//    //第二种方法： NSData类方法读取数据
-//    data = [NSData dataWithContentsOfFile:filePath];
-//    NSLog(@"NSData类方法读取的内容是：%@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-//    
-//    
-//    //第三种方法： NSString类方法读取内容
-//    NSString* content = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-//    NSLog(@"NSString类方法读取的内容是：\n%@",content);
-//    
-//    
-//    //第四种方法： NSFileHandle实例方法读取内容
-//    NSFileHandle* fh = [NSFileHandle fileHandleForReadingAtPath:filePath];
-//    data = [fh readDataToEndOfFile];
-//    NSLog(@"NSFileHandle实例读取的内容是：\n%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-
-    
-    
-    
     NSArray  *fileArray = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:filePath error:nil];
-//     return [[manager attributesOfItemAtPath:filePath error:nil] fileSize]/(1024.0*1024);
+    NSLog(@"%@", filePath);
     [self.fileArray removeAllObjects];
     for (NSString *fileName in fileArray)
     {
@@ -108,6 +86,10 @@
         fileObject.sendFileDetailsName = [filePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@",fileName]];
         fileObject.sendFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:[filePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@",fileName]] error:nil] fileSize]/1024.0;
         [self.fileArray addObject:fileObject];
+    }
+    if ([self.tableView.mj_header isRefreshing]) {
+        [self.tableView reloadData];
+        [self.tableView.mj_header endRefreshing];
     }
 }
 

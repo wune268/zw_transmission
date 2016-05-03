@@ -32,7 +32,7 @@
     [self startHttpServer];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"取消" style:UIBarButtonItemStyleDone target:self action:@selector(zw_dismiss)];
 //    [self zw_selectReceptionType:receptionFromIOS];
-    [self zw_receptionFromIOS];
+    [self zw_receptionFromPC];
 }
 
 -(void)zw_dismiss

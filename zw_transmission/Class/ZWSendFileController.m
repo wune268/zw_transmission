@@ -10,6 +10,13 @@
 #import "ZWFileObject.h"
 #import "ZWHomeTableViewCell.h"
 
+#import "AFNetworkReachabilityManager.h"
+
+#import "MBProgressHUD.h"
+//#import "AFNetworking.h"
+
+#import "ZWNetworkingRequest.h"
+
 #import <AVFoundation/AVFoundation.h>
 
 
@@ -23,7 +30,7 @@
 @property (strong, nonatomic) CALayer *scanLayer;
 @property (strong, nonatomic) UITableView *fileTableView;
 
-@property( copy, nonatomic)NSString *scanfResult;
+@property(copy, nonatomic)NSString *scanfResult;
 
 @property(strong, nonatomic)NSMutableArray *fileArray;
 
@@ -41,14 +48,25 @@
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor whiteColor];
     [self zw_creatTableView];
+    
+//    检测网络状态
+//    [self zw_netWorkStatus];
 }
 
--(void)viewWillAppear:(BOOL)animated
+-(void)zw_netWorkStatus
 {
-    [super viewWillAppear:animated];
-//    [self zw_scanfCode];
-    
+    AFNetworkReachabilityManager *manager = [AFNetworkReachabilityManager sharedManager];
+    if (manager.isReachableViaWiFi) {
+//        return [NSString stringWithFormat:@"htttp://%@:%hu", [self getIPAddress], [self.httpserver listeningPort]];
+        [self zw_scanfCode];
+    }
+    else
+    {
+//        return [NSString stringWithFormat:@"当前网络不是Wi-Fi"];
+        [self zw_dismiss];
+    }
 }
+
 
 -(void)zw_dismiss
 {
@@ -218,6 +236,8 @@
         [self.starButton removeFromSuperview];
         [self.boxView removeFromSuperview];
         [self zw_creatTableView];
+//        保存扫描结果
+        self.scanfResult = string;
     }
     [self.captureSession stopRunning];
     self.captureSession = nil;
@@ -272,7 +292,24 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     ZWFileObject *fileObject = self.fileArray[indexPath.row];
+    ZWFormData *formData = [[ZWFormData alloc] init];
+    formData.data = [NSData dataWithContentsOfFile:fileObject.sendFileDetailsName];
+    formData.filename = fileObject.sendFileName;
+    formData.mimeType = @"text/html";
+    formData.name = @"Filedata";
 # pragma 发送网络请求
+
+    if (self.scanfResult) {
+# pragma 判断是否有服务端
+    }
+    [ZWNetworkingRequest zw_postWithURL:[NSString stringWithFormat:@"http://119.29.186.242/wifiBrowser/post.php"] params:[NSDictionary dictionaryWithObject:@"Filedata" forKey:@"Filedata"] formDataArray:[NSArray arrayWithObject:formData] progress:^(NSProgress *uploadProgress) {
+//        进度条
+        NSLog(@"uploadProgress---%@",uploadProgress);
+    } success:^(id json) {
+        NSLog(@"json----%@", json);
+    } failure:^(NSError *error) {
+        NSLog(@"error---%@",error);
+    }];
 }
 
 -(NSMutableArray *)fileArray
