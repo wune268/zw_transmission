@@ -19,6 +19,10 @@
 
 #import <AVFoundation/AVFoundation.h>
 
+//#import <AssetsLibrary/AssetsLibrary.h>
+
+#import <PhotosUI/PhotosUI.h>
+
 
 @interface ZWSendFileController ()<AVCaptureMetadataOutputObjectsDelegate,UITableViewDelegate, UITableViewDataSource>
 
@@ -47,10 +51,12 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor whiteColor];
-    [self zw_creatTableView];
+//    [self zw_creatTableView];
+    
+//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(zw_getImage)];
     
 //    检测网络状态
-//    [self zw_netWorkStatus];
+    [self zw_netWorkStatus];
 }
 
 -(void)zw_netWorkStatus
@@ -70,9 +76,7 @@
 
 -(void)zw_dismiss
 {
-    [self.navigationController dismissViewControllerAnimated:YES completion:^{
-        
-    }];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 -(void)zw_scanfCode
@@ -301,15 +305,23 @@
 
     if (self.scanfResult) {
 # pragma 判断是否有服务端
+        [ZWNetworkingRequest zw_postWithURL: self.scanfResult params:[NSDictionary dictionaryWithObject:@"Filedata" forKey:@"Filedata"] formDataArray:[NSArray arrayWithObject:formData] progress:^(NSProgress *uploadProgress) {
+            //        进度条
+            NSLog(@"uploadProgress---%@",uploadProgress);
+        } success:^(id json) {
+            NSLog(@"json----%@", json);
+        } failure:^(NSError *error) {
+            NSLog(@"error---%@",error);
+        }];
     }
-    [ZWNetworkingRequest zw_postWithURL:[NSString stringWithFormat:@"http://119.29.186.242/wifiBrowser/post.php"] params:[NSDictionary dictionaryWithObject:@"Filedata" forKey:@"Filedata"] formDataArray:[NSArray arrayWithObject:formData] progress:^(NSProgress *uploadProgress) {
-//        进度条
-        NSLog(@"uploadProgress---%@",uploadProgress);
-    } success:^(id json) {
-        NSLog(@"json----%@", json);
-    } failure:^(NSError *error) {
-        NSLog(@"error---%@",error);
-    }];
+    else
+    {
+        NSLog(@"没有人接收文件");
+        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    }
+    
+//    NSString *url = [NSString stringWithFormat:@"http://119.29.186.242/wifiBrowser/post.php"];
+    
 }
 
 -(NSMutableArray *)fileArray
@@ -325,15 +337,5 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

@@ -45,7 +45,6 @@
 		682536B21CD77A4E00FD84AF /* DispatchQueueLogFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6825367E1CD77A4E00FD84AF /* DispatchQueueLogFormatter.m */; };
 		682536B31CD77A4E00FD84AF /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6825367F1CD77A4E00FD84AF /* README.txt */; };
 		682536B41CD77A4E00FD84AF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 682536821CD77A4E00FD84AF /* AppDelegate.m */; };
-		682536B61CD77A4E00FD84AF /* ZWdd.m in Sources */ = {isa = PBXBuildFile; fileRef = 682536851CD77A4E00FD84AF /* ZWdd.m */; };
 		682536B71CD77A4E00FD84AF /* ZWFileObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 682536871CD77A4E00FD84AF /* ZWFileObject.m */; };
 		682536B81CD77A4E00FD84AF /* ZWHomeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 682536891CD77A4E00FD84AF /* ZWHomeTableViewCell.m */; };
 		682536B91CD77A4E00FD84AF /* ZWHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6825368B1CD77A4E00FD84AF /* ZWHomeViewController.m */; };
@@ -152,8 +151,6 @@
 		6825367F1CD77A4E00FD84AF /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		682536811CD77A4E00FD84AF /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		682536821CD77A4E00FD84AF /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		682536841CD77A4E00FD84AF /* ZWdd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZWdd.h; sourceTree = "<group>"; };
-		682536851CD77A4E00FD84AF /* ZWdd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZWdd.m; sourceTree = "<group>"; };
 		682536861CD77A4E00FD84AF /* ZWFileObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZWFileObject.h; sourceTree = "<group>"; };
 		682536871CD77A4E00FD84AF /* ZWFileObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZWFileObject.m; sourceTree = "<group>"; };
 		682536881CD77A4E00FD84AF /* ZWHomeTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZWHomeTableViewCell.h; sourceTree = "<group>"; };
@@ -264,8 +261,6 @@
 			children = (
 				682536311CD77A4E00FD84AF /* Lib */,
 				682536801CD77A4E00FD84AF /* Main */,
-				682536841CD77A4E00FD84AF /* ZWdd.h */,
-				682536851CD77A4E00FD84AF /* ZWdd.m */,
 				682536861CD77A4E00FD84AF /* ZWFileObject.h */,
 				682536871CD77A4E00FD84AF /* ZWFileObject.m */,
 				682536881CD77A4E00FD84AF /* ZWHomeTableViewCell.h */,
@@ -644,7 +639,6 @@
 				68491D8F1CD8419E00233BE5 /* MJRefreshAutoStateFooter.m in Sources */,
 				68491D8E1CD8419E00233BE5 /* MJRefreshAutoNormalFooter.m in Sources */,
 				682536A01CD77A4E00FD84AF /* MultipartMessageHeader.m in Sources */,
-				682536B61CD77A4E00FD84AF /* ZWdd.m in Sources */,
 				6825369B1CD77A4E00FD84AF /* HTTPAuthenticationRequest.m in Sources */,
 				682536A81CD77A4E00FD84AF /* WebSocket.m in Sources */,
 				682536AA1CD77A4E00FD84AF /* GCDAsyncSocket.m in Sources */,

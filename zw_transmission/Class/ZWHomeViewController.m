@@ -32,7 +32,9 @@
     
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor whiteColor];
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"收文件" style:UIBarButtonItemStyleDone target:self action:@selector(zw_presentReception)];
+    UIBarButtonItem *PCbutton  = [[UIBarButtonItem alloc] initWithTitle:@"电脑" style:UIBarButtonItemStyleDone target:self action:@selector(zw_presentReceptionPC)];
+    UIBarButtonItem *IOSbutton = [[UIBarButtonItem alloc] initWithTitle:@"手机" style:UIBarButtonItemStyleDone target:self action:@selector(zw_presentReceptionIOS)];
+    self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:IOSbutton, PCbutton, nil];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"发文件" style:UIBarButtonItemStyleDone target:self action:@selector(zw_presentSend)];
     UIView *footView = [[UIView alloc] initWithFrame:CGRectZero];
     self.tableView.tableFooterView = footView;
@@ -129,9 +131,21 @@
     [self.navigationController pushViewController:sendFileController animated:YES];
 }
 
--(void)zw_presentReception
+-(void)zw_presentReceptionPC
 {
     ZWReceptionViewController *receptionFileController= [[ZWReceptionViewController alloc] init];
+    receptionFileController.receptionType = receptionFromPC;
+    UINavigationController *naV = [[UINavigationController alloc] initWithRootViewController:receptionFileController];
+    naV.title = @"接收文件";
+    [self.navigationController presentViewController:naV animated:YES completion:^{
+        
+    }];
+}
+
+-(void)zw_presentReceptionIOS
+{
+    ZWReceptionViewController *receptionFileController= [[ZWReceptionViewController alloc] init];
+    receptionFileController.receptionType = receptionFromIOS;
     UINavigationController *naV = [[UINavigationController alloc] initWithRootViewController:receptionFileController];
     naV.title = @"接收文件";
     [self.navigationController presentViewController:naV animated:YES completion:^{

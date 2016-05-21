@@ -29,10 +29,11 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor colorWithRed:243/255.0 green:243/255.0 blue:243/255.0 alpha:1.0];
-    [self startHttpServer];
+    [self zw_startHttpServer];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"取消" style:UIBarButtonItemStyleDone target:self action:@selector(zw_dismiss)];
-//    [self zw_selectReceptionType:receptionFromIOS];
-    [self zw_receptionFromPC];
+    [self zw_selectReceptionType:_receptionType];
+//    [self zw_receptionFromPC];
+//    [self zw_receptionFromIOS];
 }
 
 -(void)zw_dismiss
@@ -92,7 +93,8 @@
 {
     AFNetworkReachabilityManager *manager = [AFNetworkReachabilityManager sharedManager];
     if (manager.isReachableViaWiFi) {
-       return [NSString stringWithFormat:@"htttp://%@:%hu", [self getIPAddress], [self.httpserver listeningPort]];
+        [self zw_startHttpServer];
+       return [NSString stringWithFormat:@"htttp://%@:%hu", [self zw_getIPAddress], [self.httpserver listeningPort]];
     }
     else
     {
@@ -133,7 +135,7 @@
     
     //将字符串转换成NSData
     
-    NSData *data=[[NSString stringWithFormat:@"htttp://%@:%hu", [self getIPAddress], [self.httpserver listeningPort]] dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *data=[[NSString stringWithFormat:@"htttp://%@:%hu", [self zw_getIPAddress], [self.httpserver listeningPort]] dataUsingEncoding:NSUTF8StringEncoding];
     
     //通过KVO设置滤镜inputmessage数据
     
@@ -207,7 +209,7 @@
     NSLog(@"httpserver stop");
 }
 
--(void)startHttpServer
+-(void)zw_startHttpServer
 {
     HTTPServer *httpServer = [[HTTPServer alloc] init];
     self.httpserver = httpServer;
@@ -215,14 +217,14 @@
     [httpServer setPort:12345];
     NSString *webPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"web"];
     [httpServer setDocumentRoot:webPath];
-    //    NSLog(@"%@",webPath);
+//        NSLog(@"%@",webPath);
     [httpServer setConnectionClass:[ZWHTTPConnection class]];
     
     NSError * error;
     if([httpServer start:&error])
     {
         NSLog(@"start server success in port %d %@",[httpServer listeningPort],[httpServer publishedName]);
-        NSLog(@"%@",[self getIPAddress]);
+        NSLog(@"%@",[self zw_getIPAddress]);
     }
     else
     {
@@ -230,7 +232,7 @@
     }
 }
 
-- (NSString *)getIPAddress {
+- (NSString *)zw_getIPAddress {
     NSString *address = @"error";
     struct ifaddrs *interfaces = NULL;
     struct ifaddrs *temp_addr = NULL;
