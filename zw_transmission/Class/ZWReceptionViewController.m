@@ -91,15 +91,16 @@
 
 -(NSString *)zw_netWorkStatus
 {
-    AFNetworkReachabilityManager *manager = [AFNetworkReachabilityManager sharedManager];
-    if (manager.isReachableViaWiFi) {
-        [self zw_startHttpServer];
-       return [NSString stringWithFormat:@"htttp://%@:%hu", [self zw_getIPAddress], [self.httpserver listeningPort]];
-    }
-    else
-    {
-        return [NSString stringWithFormat:@"当前网络不是Wi-Fi"];
-    }
+//    AFNetworkReachabilityManager *manager = [AFNetworkReachabilityManager sharedManager];
+//    if (manager.isReachableViaWiFi) {
+//        [self zw_startHttpServer];
+//       return [NSString stringWithFormat:@"htttp://%@:%hu", [self zw_getIPAddress], [self.httpserver listeningPort]];
+//    }
+//    else
+//    {
+//        return [NSString stringWithFormat:@"当前网络不是Wi-Fi"];
+//    }
+     return [NSString stringWithFormat:@"htttp://%@:%hu", [self zw_getIPAddress], [self.httpserver listeningPort]];
 }
 
 -(void)zw_receptionFromIOS
@@ -214,7 +215,7 @@
     HTTPServer *httpServer = [[HTTPServer alloc] init];
     self.httpserver = httpServer;
     [httpServer setType:@"_http._tcp."];
-    [httpServer setPort:12345];
+//    [httpServer setPort:49309];
     NSString *webPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"web"];
     [httpServer setDocumentRoot:webPath];
 //        NSLog(@"%@",webPath);

@@ -26,6 +26,9 @@
             [formData appendPartWithFileData:zwFormData.data name:zwFormData.name fileName:zwFormData.filename mimeType:zwFormData.mimeType];
         }
     } progress:^(NSProgress * _Nonnull uploadProgress) {
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            
+//        });
         if (progress) {
             progress(uploadProgress);
         }

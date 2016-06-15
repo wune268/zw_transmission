@@ -115,6 +115,46 @@
     [self zw_openFielWithPath:fileObject.sendFileDetailsName fileName:fileObject.sendFileName];
 }
 
+-(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{//请求数据源提交的插入或删除指定行接收者。
+    if (editingStyle == UITableViewCellEditingStyleDelete) {//如果编辑样式为删除样式
+        if (indexPath.row<[self.fileArray count]) {
+            ZWFileObject *fileObject = self.fileArray[indexPath.row];
+            [self deleteFile:fileObject.sendFileDetailsName];
+            [self.fileArray removeObjectAtIndex:indexPath.row];//移除数据源的数据
+            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationLeft];//移除tableView中的数据
+        }
+    }
+}
+
+//修改编辑按钮文字
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return @"删除";
+}
+
+// 删除沙盒里的文件
+-(void)deleteFile:(NSString *)uniquePath {
+    NSFileManager* fileManager=[NSFileManager defaultManager];
+//    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);
+//    
+//    //文件名
+//    NSString *uniquePath=[[paths objectAtIndex:0] stringByAppendingPathComponent:@"pin.png"];
+    BOOL blHave=[[NSFileManager defaultManager] fileExistsAtPath:uniquePath];
+    if (!blHave) {
+        NSLog(@"no  have");
+        return ;
+    }else {
+        NSLog(@" have");
+        BOOL blDele= [fileManager removeItemAtPath:uniquePath error:nil];
+        if (blDele) {
+            NSLog(@"dele success");
+        }else {
+            NSLog(@"dele fail");
+        }
+        
+    }
+}
+
 -(NSMutableArray *)fileArray
 {
     if (!_fileArray) {

@@ -23,6 +23,8 @@
 
 #import <PhotosUI/PhotosUI.h>
 
+//#import "SDProgressView.h"
+
 
 @interface ZWSendFileController ()<AVCaptureMetadataOutputObjectsDelegate,UITableViewDelegate, UITableViewDataSource>
 
@@ -43,6 +45,8 @@
 //展示layer
 @property (nonatomic, strong) AVCaptureVideoPreviewLayer *videoPreviewLayer;
 
+@property (nonatomic, strong) MBProgressHUD *hud;
+
 @end
 
 @implementation ZWSendFileController
@@ -55,22 +59,35 @@
     
 //    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(zw_getImage)];
     
+//    MBProgressHUD *hud = [[MBProgressHUD alloc]initWithView:self.view];
+//    
+//    hud.label.text = @"正在上传";
+//    
+//    hud.mode = MBProgressHUDModeAnnularDeterminate;
+//    
+//    self.hud = hud;
+//    
+//    [self.fileTableView addSubview:hud];
+    
+    
+    
+    
 //    检测网络状态
     [self zw_netWorkStatus];
 }
 
 -(void)zw_netWorkStatus
 {
-    AFNetworkReachabilityManager *manager = [AFNetworkReachabilityManager sharedManager];
-    if (manager.isReachableViaWiFi) {
-//        return [NSString stringWithFormat:@"htttp://%@:%hu", [self getIPAddress], [self.httpserver listeningPort]];
-        [self zw_scanfCode];
-    }
-    else
-    {
-//        return [NSString stringWithFormat:@"当前网络不是Wi-Fi"];
-        [self zw_dismiss];
-    }
+//    AFNetworkReachabilityManager *manager = [AFNetworkReachabilityManager sharedManager];
+//    if (manager.isReachableViaWiFi) {
+//        [self zw_scanfCode];
+//    }
+//    else
+//    {
+//        [self zw_dismiss];
+//    }
+    self.scanfResult = @"http://119.29.186.242/wifiBrowser/";
+    [self zw_creatTableView];
 }
 
 
@@ -308,9 +325,14 @@
         [ZWNetworkingRequest zw_postWithURL: self.scanfResult params:[NSDictionary dictionaryWithObject:@"Filedata" forKey:@"Filedata"] formDataArray:[NSArray arrayWithObject:formData] progress:^(NSProgress *uploadProgress) {
             //        进度条
             NSLog(@"uploadProgress---%@",uploadProgress);
+            
+            [uploadProgress addObserver:self forKeyPath:@"fractionCompleted" options:NSKeyValueObservingOptionNew context:nil];
+            
         } success:^(id json) {
+            [self.hud hideAnimated:YES];
             NSLog(@"json----%@", json);
         } failure:^(NSError *error) {
+            [self.hud hideAnimated:YES];
             NSLog(@"error---%@",error);
         }];
     }
@@ -322,6 +344,32 @@
     
 //    NSString *url = [NSString stringWithFormat:@"http://119.29.186.242/wifiBrowser/post.php"];
     
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+
+{
+    
+    if ([keyPath isEqualToString:@"fractionCompleted"] && [object isKindOfClass:[NSProgress class]]) {
+        [self performSelectorOnMainThread:@selector(sss:) withObject:object waitUntilDone:YES];
+        
+    }
+    
+}
+
+-(void)sss:(id)object
+{
+    NSProgress *progress = (NSProgress *)object;
+    
+    // 快速显示一个提示信息
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:[[UIApplication sharedApplication].windows lastObject] animated:YES];
+    // 隐藏时候从父控件中移除
+    hud.removeFromSuperViewOnHide = YES;
+    hud.mode = MBProgressHUDModeDeterminateHorizontalBar;
+//    kProgress.totalUnitCount,kProgress.completedUnitCount);
+    hud.label.text = [NSString stringWithFormat:@"%.0f%%",100.0*progress.completedUnitCount/progress.totalUnitCount];
+    hud.progress = progress.fractionCompleted;
+    self.hud = hud;
 }
 
 -(NSMutableArray *)fileArray
