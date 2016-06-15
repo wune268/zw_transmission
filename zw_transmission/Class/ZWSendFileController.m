@@ -85,14 +85,14 @@
 {
 //    AFNetworkReachabilityManager *manager = [AFNetworkReachabilityManager sharedManager];
 //    if (manager.isReachableViaWiFi) {
-//        [self zw_scanfCode];
+        [self zw_scanfCode];
 //    }
 //    else
 //    {
 //        [self zw_dismiss];
 //    }
-    self.scanfResult = @"http://192.168.177.1/wifiBrowser/";
-    [self zw_creatTableView];
+//    self.scanfResult = @"http://192.168.177.1/wifiBrowser/";
+//    [self zw_creatTableView];
 }
 
 
