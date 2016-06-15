@@ -10,4 +10,9 @@
 
 @implementation ZWFileObject
 
+-(void)r
+{
+    
+}
+
 @end
