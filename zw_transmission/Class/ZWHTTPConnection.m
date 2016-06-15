@@ -20,6 +20,14 @@
 #import "MultipartFormDataParser.h"
 #import "HTTPFileResponse.h"
 
+#import "MBProgressHUD.h"
+
+@interface ZWHTTPConnection()
+
+@property(nonatomic, weak)MBProgressHUD *hud;
+
+@end
+
 @implementation ZWHTTPConnection
 
 #pragma mark HTTP Request and Response
@@ -120,6 +128,7 @@
     parser.delegate = self;
     
     uploadedFiles = [[NSMutableArray alloc] init];
+//    NSLog(@"prepareForBodyWithSize%llu", contentLength);
 }
 
 - (void)processBodyData:(NSData *)postDataChunk
@@ -127,6 +136,7 @@
     // append data to the parser. It will invoke callbacks to let us handle
     // parsed data.
     [parser appendData:postDataChunk];
+//    NSLog(@"processBodyData");
 }
 
 
@@ -138,6 +148,7 @@
     // in this sample, we are not interested in parts, other then file parts.
     // check content disposition to find out filename
     
+    [self performSelectorOnMainThread:@selector(zw_showprogress) withObject:nil waitUntilDone:YES];
     
     MultipartMessageHeaderField *disposition = [header.fields objectForKey:@"Content-Disposition"];
     NSString *fileName = [[disposition.params objectForKey:@"filename"] lastPathComponent];
@@ -151,8 +162,15 @@
         return;
     isUploading = YES;
     storeFile = [NSFileHandle fileHandleForWritingAtPath:uploadFilePath];
+//    NSLog(@"processStartOfPartWithHeader");
 }
 
+-(void)zw_showprogress
+{
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:[[UIApplication sharedApplication].windows lastObject] animated:YES];
+    hud.mode = MBProgressHUDModeIndeterminate;
+    self.hud = hud;
+}
 
 - (void) processContent:(NSData*) data WithHeader:(MultipartMessageHeader*) header
 {
@@ -167,17 +185,22 @@
     // as the file part is over, we close the file.
     [storeFile closeFile];
     storeFile = nil;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [self.hud hideAnimated:YES];
+        self.hud = nil;
+    });
 }
 
 - (void) processPreambleData:(NSData*) data 
 {
     // if we are interested in preamble data, we could process it here.
-    
+//    NSLog(@"processPreambleData");
 }
 
 - (void) processEpilogueData:(NSData*) data 
 {
     // if we are interested in epilogue data, we could process it here.
+//    NSLog(@"processEpilogueData");
     
 }
 @end

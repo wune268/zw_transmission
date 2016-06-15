@@ -45,7 +45,7 @@
 //展示layer
 @property (nonatomic, strong) AVCaptureVideoPreviewLayer *videoPreviewLayer;
 
-@property (nonatomic, strong) MBProgressHUD *hud;
+@property (nonatomic, weak) MBProgressHUD *hud;
 
 @end
 
@@ -70,6 +70,11 @@
 //    [self.fileTableView addSubview:hud];
     
     
+    // 快速显示一个提示信息
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:[[UIApplication sharedApplication].windows lastObject] animated:YES];
+    hud.mode = MBProgressHUDModeDeterminateHorizontalBar;
+    self.hud = hud;
+    self.hud.hidden = YES;
     
     
 //    检测网络状态
@@ -86,7 +91,7 @@
 //    {
 //        [self zw_dismiss];
 //    }
-    self.scanfResult = @"http://119.29.186.242/wifiBrowser/";
+    self.scanfResult = @"http://192.168.177.1/wifiBrowser/";
     [self zw_creatTableView];
 }
 
@@ -329,10 +334,16 @@
             [uploadProgress addObserver:self forKeyPath:@"fractionCompleted" options:NSKeyValueObservingOptionNew context:nil];
             
         } success:^(id json) {
-            [self.hud hideAnimated:YES];
+//            [self.hud hideAnimated:YES];
+//            dispatch_sync(dispatch_get_main_queue(), ^{
+//                [self.hud removeFromSuperview];
+//            });
             NSLog(@"json----%@", json);
         } failure:^(NSError *error) {
-            [self.hud hideAnimated:YES];
+//            [self.hud hideAnimated:YES];
+//            dispatch_sync(dispatch_get_main_queue(), ^{
+//                [self.hud removeFromSuperview];
+//            });
             NSLog(@"error---%@",error);
         }];
     }
@@ -347,29 +358,22 @@
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-
 {
-    
     if ([keyPath isEqualToString:@"fractionCompleted"] && [object isKindOfClass:[NSProgress class]]) {
-        [self performSelectorOnMainThread:@selector(sss:) withObject:object waitUntilDone:YES];
-        
+        [self performSelectorOnMainThread:@selector(zw_showprogress:) withObject:object waitUntilDone:YES];
     }
-    
 }
 
--(void)sss:(id)object
+-(void)zw_showprogress:(id)object
 {
     NSProgress *progress = (NSProgress *)object;
-    
-    // 快速显示一个提示信息
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:[[UIApplication sharedApplication].windows lastObject] animated:YES];
-    // 隐藏时候从父控件中移除
-    hud.removeFromSuperViewOnHide = YES;
-    hud.mode = MBProgressHUDModeDeterminateHorizontalBar;
-//    kProgress.totalUnitCount,kProgress.completedUnitCount);
-    hud.label.text = [NSString stringWithFormat:@"%.0f%%",100.0*progress.completedUnitCount/progress.totalUnitCount];
-    hud.progress = progress.fractionCompleted;
-    self.hud = hud;
+    self.hud.label.text = [NSString stringWithFormat:@"%.0f%%",100.0*progress.completedUnitCount/progress.totalUnitCount];
+    self.hud.progress = progress.fractionCompleted;
+    self.hud.hidden = NO;
+    if(progress.completedUnitCount == progress.totalUnitCount)
+    {
+        self.hud.hidden = YES;
+    }
 }
 
 -(NSMutableArray *)fileArray

@@ -115,25 +115,64 @@
     [self zw_openFielWithPath:fileObject.sendFileDetailsName fileName:fileObject.sendFileName];
 }
 
--(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{//请求数据源提交的插入或删除指定行接收者。
-    if (editingStyle == UITableViewCellEditingStyleDelete) {//如果编辑样式为删除样式
+//-(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{//请求数据源提交的插入或删除指定行接收者。
+//    if (editingStyle == UITableViewCellEditingStyleDelete) {//如果编辑样式为删除样式
+//        if (indexPath.row<[self.fileArray count]) {
+//            ZWFileObject *fileObject = self.fileArray[indexPath.row];
+//            [self zw_deleteFile:fileObject.sendFileDetailsName];
+//            [self.fileArray removeObjectAtIndex:indexPath.row];//移除数据源的数据
+//            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationLeft];//移除tableView中的数据
+//        }
+//    }
+//}
+
+-(NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewRowAction *deleteButton = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"删除" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         if (indexPath.row<[self.fileArray count]) {
             ZWFileObject *fileObject = self.fileArray[indexPath.row];
-            [self deleteFile:fileObject.sendFileDetailsName];
+            [self zw_deleteFile:fileObject.sendFileDetailsName];
             [self.fileArray removeObjectAtIndex:indexPath.row];//移除数据源的数据
             [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationLeft];//移除tableView中的数据
         }
-    }
+    }];
+    UITableViewRowAction *renameButton = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"重命名" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        ZWFileObject *fileObject = self.fileArray[indexPath.row];
+        UIAlertController *renameController = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"重命名%@", fileObject.sendFileName] message:nil preferredStyle:UIAlertControllerStyleAlert];
+        [renameController addTextFieldWithConfigurationHandler:^(UITextField *textField){
+            textField.placeholder = @"请输入名字";
+        }];
+        [renameController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+            [self dismissViewControllerAnimated:YES completion:^{
+                
+            }];
+        }]];
+        [renameController addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            UITextField *textfield = [[renameController textFields] firstObject];
+            
+            NSString *string = fileObject.sendFileName;
+            NSRange range = [string rangeOfString:@"."];//匹配得到的下标
+            string = [string substringFromIndex:range.location];
+            NSLog(@"截取的值为：%@",string);
+            
+            
+            [self zw_renameFile:[NSString stringWithFormat:@"%@%@", textfield.text, string] pathname:fileObject.sendFileDetailsName];
+        }]];
+        [self presentViewController:renameController animated:YES completion:^{
+            
+        }];
+    }];
+    return @[deleteButton, renameButton];
 }
 
-//修改编辑按钮文字
-- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return @"删除";
-}
+////修改编辑按钮文字
+//- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    return @"删除";
+//}
 
 // 删除沙盒里的文件
--(void)deleteFile:(NSString *)uniquePath {
+-(void)zw_deleteFile:(NSString *)uniquePath {
     NSFileManager* fileManager=[NSFileManager defaultManager];
 //    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);
 //    
@@ -153,6 +192,31 @@
         }
         
     }
+}
+
+
+-(void)zw_renameFile:(NSString *)firename pathname:(NSString *)pathname
+{
+    NSError *error;
+    NSString *filePath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    
+//    NSArray  *fileArray = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:filePath error:nil];
+    
+    //通过移动该文件对文件重命名
+    NSString *filePath2= [filePath stringByAppendingPathComponent:firename];
+    //判断是否移动
+    if ([[NSFileManager defaultManager] moveItemAtPath:pathname toPath:filePath2 error:&error] != YES)
+    {
+        NSLog(@"Unable to move file: %@", [error localizedDescription]);
+    }
+    else
+    {
+        [self zw_deleteFile:pathname];
+        [self.tableView.mj_header beginRefreshing];
+    }
+    //显示文件目录的内容
+//    NSLog(@"Documentsdirectory: %@",
+//          [[NSFileManager defaultManager] contentsOfDirectoryAtPath:documentsDirectoryerror:&error]);
 }
 
 -(NSMutableArray *)fileArray
